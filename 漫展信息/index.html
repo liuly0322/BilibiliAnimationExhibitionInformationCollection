@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bilibili 漫展信息收集</title>
+  </head>
+  <body>
+    <style>
+      a {
+        color: black;
+      }
+    </style>
+    <h1>Bilibili 漫展信息收集</h1>
+    <p id="updateTime"></p>
+    <script>
+      // fetch timestamp.txt to get the last update time
+      fetch("timestamp.txt")
+        .then((response) => response.text())
+        .then((data) => {
+          // data is a timestamp number
+          // we make it human-readable
+          time = new Date(Number(data) * 1000).toLocaleString();
+          document.getElementById(
+            "updateTime"
+          ).innerHTML = `最后更新时间：${time}`;
+        })
+        .catch((error) => {
+          document.getElementById(
+            "updateTime"
+          ).innerHTML = `Error loading timestamp.txt: ${error}`;
+        });
+    </script>
+    <p>
+      由 GitHub Action 定时运行，每天更新一次。
+      <a
+        href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection"
+        >查看仓库</a
+      >
+    </p>
+    <!-- BEGIN: Select City -->
+    <select id="citySelect">
+      <option value="上海">上海</option>
+      <option value="杭州">杭州</option>
+      <option value="苏州">苏州</option>
+      <option value="北京">北京</option>
+      <option value="丽水">丽水</option>
+      <option value="广州">广州</option>
+    </select>
+    <!-- END: Select City -->
+
+    <!-- BEGIN: JSON Display -->
+    <div id="jsonDisplay"></div>
+    <!-- END: JSON Display -->
+
+    <script>
+      const citySelect = document.getElementById("citySelect");
+      const jsonDisplay = document.getElementById("jsonDisplay");
+      const updateJsonDisplay = () => {
+        const selectedCity = citySelect.value;
+        const jsonFilePath = `${selectedCity}-漫展信息.json`;
+
+        fetch(jsonFilePath)
+          .then((response) => response.json())
+          .then((data) => {
+            jsonDisplay.innerHTML = "";
+            // <details> and <summary> for each kind of exhibition
+            for (const exhibitionKind in data) {
+              const exhibitionKindDetails = document.createElement("details");
+              const exhibitionKindSummary = document.createElement("summary");
+              exhibitionKindSummary.innerHTML = exhibitionKind;
+              exhibitionKindDetails.appendChild(exhibitionKindSummary);
+              exhibitions = data[exhibitionKind]; // a array of exhibition info in k-v object
+              // extract the keys of the first exhibition as the table header
+              const tableHeader = document.createElement("tr");
+              for (const key in exhibitions[0]) {
+                // skip "Link" key
+                if (key === "Link") {
+                  continue;
+                }
+                const tableHeaderCell = document.createElement("th");
+                tableHeaderCell.innerHTML = key;
+                tableHeader.appendChild(tableHeaderCell);
+              }
+              // <table> for each kind of exhibition
+              const table = document.createElement("table");
+              table.appendChild(tableHeader);
+              // <tr> and <td> for each exhibition
+              for (const exhibition of exhibitions) {
+                const tableRow = document.createElement("tr");
+                for (const key in exhibition) {
+                  // skip "Link" key
+                  if (key === "Link") {
+                    continue;
+                  }
+                  const tableCell = document.createElement("td");
+                  // if key is "名称", use <a> to wrap the value with "Link" as href
+                  // else tableCell.innerHTML = exhibition[key];
+                  if (key === "名称") {
+                    const link = document.createElement("a");
+                    link.href = exhibition["Link"];
+                    link.innerHTML = exhibition[key];
+                    tableCell.appendChild(link);
+                  } else {
+                    tableCell.innerHTML = exhibition[key];
+                  }
+                  tableRow.appendChild(tableCell);
+                }
+                table.appendChild(tableRow);
+              }
+              exhibitionKindDetails.appendChild(table);
+              jsonDisplay.appendChild(exhibitionKindDetails);
+            }
+          })
+          .catch((error) => {
+            jsonDisplay.innerHTML = `Error loading JSON: ${error}`;
+          });
+      };
+      citySelect.addEventListener("change", () => {
+        // remember the selected city in localStorage
+        localStorage.setItem("selectedCity", citySelect.value);
+        updateJsonDisplay();
+      });
+      // load the selected city from localStorage
+      citySelect.value = localStorage.getItem("selectedCity") || "上海";
+      updateJsonDisplay();
+    </script>
+  </body>
+</html>
