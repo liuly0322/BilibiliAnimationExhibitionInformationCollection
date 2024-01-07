@@ -1,0 +1,25 @@
+name: Update xlsx
+
+# mannually trigger workflow or run on schedule
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  update-xlsx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install -r requirements.txt
+      - run: python main.py
+      - uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: 漫展信息
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
