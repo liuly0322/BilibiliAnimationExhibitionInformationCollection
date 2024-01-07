@@ -120,7 +120,7 @@ def collectEachPage(headers, pageContent, resultList):
                 (price_low if price_low != "" else sale_flag), hasDancing, activityUrl]
         resultList.append(list)
 
-
-thread1 = threading.Thread(name='t1', target=getAllInfo())
-thread1.start()
-# 这里看起来是用了进程，实际上完全没有显示，不用管这个，就算没有打包成类也可以直接爬取。
+if __name__ == '__main__':
+    thread1 = threading.Thread(name='t1', target=getAllInfo())
+    thread1.start()
+    # 这里看起来是用了进程，实际上完全没有显示，不用管这个，就算没有打包成类也可以直接爬取。
