@@ -14,6 +14,51 @@
       #citySelectDiv {
         margin-bottom: 1em;
       }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4caf50;
+        color: white;
+      }
+      details {
+        border: 1px solid #ddd;
+        padding: 0.5em;
+        margin-bottom: 1em;
+        background-color: #f9f9f9;
+      }
+      summary {
+        font-weight: bold;
+        margin: -0.5em -0.5em 0;
+        padding: 0.5em;
+      }
+      details[open] {
+        padding: 0.5em;
+      }
+      details[open] summary {
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 0.5em;
+      }
+      @media screen and (max-width: 600px) {
+        table {
+          width: 100%;
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+      }
     </style>
     <h1>Bilibili 漫展信息收集</h1>
 
@@ -57,6 +102,35 @@
       const citySelect = document.getElementById("citySelect");
       const jsonDisplay = document.getElementById("jsonDisplay");
       const updateJsonDisplay = () => {
+        const hiddenKeys = ["Link", "是否有舞台（字符串匹配）"];
+        const keyHandlers = {
+          名称: (tableCell, exhibition) => {
+            const link = document.createElement("a");
+            link.href = exhibition["Link"];
+            link.innerHTML = exhibition["名称"];
+            tableCell.appendChild(link);
+          },
+          地点: (tableCell, exhibition) => {
+            // if 是否有舞台（字符串匹配）is true, add a 🎤 emoji
+            if (exhibition["是否有舞台（字符串匹配）"] === true) {
+              tableCell.innerHTML = `${exhibition["地点"]} 🎤`;
+            } else {
+              tableCell.innerHTML = exhibition["地点"];
+            }
+          },
+          具体时间范围: (tableCell, exhibition) => {
+            const timeRange = exhibition["具体时间范围"];
+            // replace all "yyyy.mm.dd" to "mm.dd"
+            const timeRangeShort = timeRange.replace(
+              /\d{4}\.\d{2}\.\d{2}/g,
+              (match) => {
+                return match.slice(5);
+              }
+            );
+            tableCell.innerHTML = timeRangeShort;
+          },
+        };
+
         const selectedCity = citySelect.value;
         const jsonFilePath = `${selectedCity}-漫展信息.json`;
 
@@ -74,8 +148,7 @@
               // extract the keys of the first exhibition as the table header
               const tableHeader = document.createElement("tr");
               for (const key in exhibitions[0]) {
-                // skip "Link" key
-                if (key === "Link") {
+                if (hiddenKeys.includes(key)) {
                   continue;
                 }
                 const tableHeaderCell = document.createElement("th");
@@ -89,18 +162,12 @@
               for (const exhibition of exhibitions) {
                 const tableRow = document.createElement("tr");
                 for (const key in exhibition) {
-                  // skip "Link" key
-                  if (key === "Link") {
+                  if (hiddenKeys.includes(key)) {
                     continue;
                   }
                   const tableCell = document.createElement("td");
-                  // if key is "名称", use <a> to wrap the value with "Link" as href
-                  // else tableCell.innerHTML = exhibition[key];
-                  if (key === "名称") {
-                    const link = document.createElement("a");
-                    link.href = exhibition["Link"];
-                    link.innerHTML = exhibition[key];
-                    tableCell.appendChild(link);
+                  if (key in keyHandlers) {
+                    keyHandlers[key](tableCell, exhibition);
                   } else {
                     tableCell.innerHTML = exhibition[key];
                   }
@@ -113,6 +180,7 @@
             }
           })
           .catch((error) => {
+            console.log(error);
             jsonDisplay.innerHTML = `Error loading JSON: ${error}`;
           });
       };
