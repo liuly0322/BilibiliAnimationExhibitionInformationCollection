@@ -12,6 +12,7 @@
       }
     </style>
     <h1>Bilibili 漫展信息收集</h1>
+
     <p id="updateTime"></p>
     <script>
       // fetch timestamp.txt to get the last update time
@@ -31,13 +32,7 @@
           ).innerHTML = `Error loading timestamp.txt: ${error}`;
         });
     </script>
-    <p>
-      由 GitHub Action 定时运行，每天更新一次。
-      <a
-        href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection"
-        >查看仓库</a
-      >
-    </p>
+    
     <!-- BEGIN: Select City -->
     <select id="citySelect">
       <option value="上海">上海</option>
@@ -125,5 +120,16 @@
       citySelect.value = localStorage.getItem("selectedCity") || "上海";
       updateJsonDisplay();
     </script>
+
+    <p>
+      由 GitHub Action 每日更新。
+      <a
+        href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection"
+        >查看仓库</a
+      >
+    </p>
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <p><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span></p>
   </body>
 </html>
