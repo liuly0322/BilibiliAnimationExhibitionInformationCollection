@@ -10,17 +10,24 @@
       a {
         color: black;
       }
+      #autoUpdateStatus,
+      #citySelectDiv {
+        margin-bottom: 1em;
+      }
     </style>
     <h1>Bilibili 漫展信息收集</h1>
 
-    <p id="updateTime"></p>
+    <div id="autoUpdateStatus">
+      <span id="updateTime"></span>（<a
+        href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection/actions/workflows/auto_update.yml"
+        >GitHub Actions</a
+      >）
+    </div>
     <script>
       // fetch timestamp.txt to get the last update time
       fetch("timestamp.txt")
         .then((response) => response.text())
         .then((data) => {
-          // data is a timestamp number
-          // we make it human-readable
           time = new Date(Number(data) * 1000).toLocaleString();
           document.getElementById(
             "updateTime"
@@ -32,22 +39,20 @@
           ).innerHTML = `Error loading timestamp.txt: ${error}`;
         });
     </script>
-    
-    <!-- BEGIN: Select City -->
-    <select id="citySelect">
-      <option value="上海">上海</option>
-      <option value="杭州">杭州</option>
-      <option value="苏州">苏州</option>
-      <option value="北京">北京</option>
-      <option value="丽水">丽水</option>
-      <option value="广州">广州</option>
-    </select>
-    <!-- END: Select City -->
 
-    <!-- BEGIN: JSON Display -->
+    <div id="citySelectDiv">
+      选择城市：<select id="citySelect">
+        <option value="上海">上海</option>
+        <option value="杭州">杭州</option>
+        <option value="苏州">苏州</option>
+        <option value="北京">北京</option>
+        <option value="丽水">丽水</option>
+        <option value="广州">广州</option>
+        <option value="合肥">合肥</option>
+      </select>
+    </div>
+
     <div id="jsonDisplay"></div>
-    <!-- END: JSON Display -->
-
     <script>
       const citySelect = document.getElementById("citySelect");
       const jsonDisplay = document.getElementById("jsonDisplay");
@@ -121,15 +126,14 @@
       updateJsonDisplay();
     </script>
 
+    <script
+      async
+      src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
+    ></script>
     <p>
-      由 GitHub Action 每日更新。
-      <a
-        href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection"
-        >查看仓库</a
-      >
+      <span id="busuanzi_container_page_pv">
+        总访问量 <span id="busuanzi_value_page_pv"></span> 次
+      </span>
     </p>
-
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <p><span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span></p>
   </body>
 </html>
