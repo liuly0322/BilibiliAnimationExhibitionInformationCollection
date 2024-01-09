@@ -8,8 +8,8 @@ The result page: <https://liuly.moe/BilibiliAnimationExhibitionInformationCollec
 
 ## Help wanted
 
-- [ ] page design (reference page wanted)
-- [ ] PWA(?)
+- [x] page design (reference page wanted)
+- [ ] PWA (?)
 
 ## Run
 
