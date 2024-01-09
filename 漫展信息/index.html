@@ -4,34 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bilibili 漫展信息收集</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   </head>
   <body>
     <style>
       a {
         color: black;
       }
-      #autoUpdateStatus,
-      #citySelectDiv {
+      #auto-update-status,
+      #city-select-div {
         margin-bottom: 1em;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: left;
-        background-color: #4caf50;
-        color: white;
       }
       details {
         border: 1px solid #ddd;
@@ -51,148 +33,335 @@
         border-bottom: 1px solid #ddd;
         margin-bottom: 0.5em;
       }
+      /* wide screen mode */
+      @media screen and (min-width: 600px) {
+        #project-list {
+          margin: 0 auto;
+          overflow: hidden;
+        }
+        .project-list-item {
+          position: relative;
+          display: flex;
+          cursor: pointer;
+          margin-top: 60px;
+          margin-right: 40px;
+          width: 560px;
+          height: 237px;
+          background: #fff;
+          box-shadow: 0 0 15px 0 hsla(203, 6%, 45%, 0.09);
+          border-radius: 8px;
+          float: left;
+          transition: transform 0.2s;
+        }
+        #project-list .project-list-item:hover {
+          box-shadow: 0 15px 20px 0 hsla(203, 6%, 45%, 0.4);
+        }
+        #project-list .project-list-item:hover .project-list-item-img {
+          transform: translate3d(0, -10px, 0);
+        }
+        .project-list-item-img {
+          transition: transform 0.1s;
+          background: #fff;
+          box-shadow: 3px 3px 2px 0 hsla(203, 6%, 45%, 0.3);
+          border-radius: 8px;
+          left: 20px;
+          bottom: 24px;
+          position: absolute;
+          width: 175px;
+          height: 233px;
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+        }
+        .project-list-item-detail {
+          margin-left: 223px;
+        }
+        .project-list-item-title {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          margin-top: 30px;
+          width: 286px;
+          height: 48px;
+          font-size: 18px;
+          color: #222;
+          letter-spacing: 0;
+          line-height: 24px;
+        }
+        .project-list-item-time,
+        .project-list-item-time-detail,
+        .project-list-item-address {
+          margin-top: 19px;
+          display: flex;
+          align-items: center;
+          height: 17px;
+          font-size: 14px;
+          color: #999;
+        }
+        .project-list-item-time-detail,
+        .project-list-item-address {
+          margin-top: 10px;
+        }
+        .project-list-item-price {
+          display: flex;
+          align-items: flex-end;
+          margin-top: 13px;
+          color: #f25d8e;
+        }
+        .project-list-item-price .price-symbol {
+          align-self: flex-end;
+          font-size: 18px;
+          line-height: 18px;
+        }
+        .project-list-item-price .price {
+          margin-left: 4px;
+          font-size: 28px;
+          letter-spacing: 1px;
+          line-height: 24px;
+        }
+      }
+      /* 2 tab */
+      @media screen and (min-width: 1200px) {
+        #project-list {
+          width: 1160px;
+        }
+        #project-list .project-list-item:nth-child(2n) {
+          margin-right: 0;
+        }
+      }
+      /* 3 tab */
+      @media screen and (min-width: 1800px) {
+        #project-list {
+          width: 1760px;
+        }
+        #project-list .project-list-item:nth-child(2n) {
+          margin-right: 40px;
+        }
+        #project-list .project-list-item:nth-child(3n) {
+          margin-right: 0;
+        }
+      }
+      /* mobile */
       @media screen and (max-width: 600px) {
-        table {
-          width: 100%;
-          display: block;
-          overflow-x: auto;
-          white-space: nowrap;
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        h1,
+        p,
+        #auto-update-status,
+        #city-select-div {
+          padding: 4px;
+        }
+        details {
+          padding: 4px;
+        }
+        details[open] {
+          padding: 4px 0;
+        }
+        summary {
+          padding: 4px;
+          margin: 0;
+        }
+        #project-list {
+          background-color: #fff;
+          padding: 3.2vw 4.26667vw 2.66667vw;
+        }
+        #project-list .project-list-item:not(:first-child) {
+          margin-top: 9.6vw;
+        }
+        .project-list-item {
+          display: flex;
+        }
+        .project-list-item-img {
+          -webkit-box-flex: 0;
+          background-size: 10.66667vw 10.66667vw;
+          border-radius: 0.53333vw;
+          -webkit-box-shadow: 0 1.33333vw 2.66667vw rgba(0, 0, 0, 0.1);
+          box-shadow: 0 1.33333vw 2.66667vw rgba(0, 0, 0, 0.1);
+          -ms-flex: 0 0 24vw;
+          flex: 0 0 24vw;
+          height: 32vw;
+          position: relative;
+          width: 24vw;
+        }
+        .project-list-item-detail {
+          -webkit-box-flex: 1;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+          -webkit-box-align: stretch;
+          -ms-flex-align: stretch;
+          align-items: stretch;
+          color: #212121;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          overflow: hidden;
+          padding-left: 3.2vw;
+        }
+        .project-list-item-title {
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          color: #212121;
+          display: -webkit-box;
+          font-size: 4.26667vw;
+          font-weight: 700;
+          line-height: 5.06667vw;
+          margin-bottom: 1.86667vw;
+          max-height: 9.86667vw;
+          overflow: hidden;
+          position: relative;
+        }
+        .project-list-item-time {
+          display: none;
+        }
+        .project-list-item-time-detail,
+        .project-list-item-address {
+          font-size: 3.2vw;
+        }
+        .project-list-item-price {
+          color: #f25d8e;
+          margin-top: auto;
+        }
+        .project-list-item-price .price {
+          margin-left: 0.53333vw;
+          font-size: 5.33333vw;
+          font-weight: 700;
+          line-height: 5.33333vw;
         }
       }
     </style>
     <h1>Bilibili 漫展信息收集</h1>
 
-    <div id="autoUpdateStatus">
-      <span id="updateTime"></span>（<a
+    <div id="auto-update-status">
+      <span id="update_time"></span>（<a
         href="https://github.com/liuly0322/BilibiliAnimationExhibitionInformationCollection/actions/workflows/auto_update.yml"
         >GitHub Actions</a
       >）
     </div>
     <script>
-      // fetch timestamp.txt to get the last update time
       fetch("timestamp.txt")
         .then((response) => response.text())
         .then((data) => {
           time = new Date(Number(data) * 1000).toLocaleString();
           document.getElementById(
-            "updateTime"
+            "update_time"
           ).innerHTML = `最后更新时间：${time}`;
         })
         .catch((error) => {
           document.getElementById(
-            "updateTime"
+            "update_time"
           ).innerHTML = `Error loading timestamp.txt: ${error}`;
         });
     </script>
 
-    <div id="citySelectDiv">
-      选择城市：<select id="citySelect">
-        <option value="上海">上海</option>
-        <option value="杭州">杭州</option>
-        <option value="苏州">苏州</option>
-        <option value="北京">北京</option>
-        <option value="丽水">丽水</option>
-        <option value="广州">广州</option>
-        <option value="合肥">合肥</option>
-        <option value="南宁">南宁</option>
-      </select>
+    <div id="app">
+      <div id="city-select-div">
+        选择城市：<select v-model="citySelect">
+          <option value="上海">上海</option>
+          <option value="杭州">杭州</option>
+          <option value="苏州">苏州</option>
+          <option value="北京">北京</option>
+          <option value="丽水">丽水</option>
+          <option value="广州">广州</option>
+          <option value="合肥">合肥</option>
+          <option value="南宁">南宁</option>
+        </select>
+      </div>
+      <div id="json-display">
+        <details v-for="(value, key) in nonEmptyKindsExhibitions">
+          <summary>{{ key }}</summary>
+          <div id="project-list">
+            <div
+              v-for="item in value"
+              class="project-list-item"
+              @click="redirect(item)"
+            >
+              <div
+                class="project-list-item-img"
+                :style="{ backgroundImage: 'url(' + getCoverUrl(item.Cover) + ')' }"
+              ></div>
+              <div class="project-list-item-detail">
+                <div class="project-list-item-title">{{ item.名称 }}</div>
+                <div class="project-list-item-time">📅 {{ item.开始时间 }}</div>
+                <div class="project-list-item-time-detail">
+                  🕒 {{ item.具体时间范围 }}
+                </div>
+                <div class="project-list-item-address">📍 {{ item.地点 }}</div>
+                <div class="project-list-item-price">
+                  <span class="price-symbol">¥</span>
+                  <span class="price">{{ item.最低票价 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
     </div>
 
-    <div id="jsonDisplay"></div>
     <script>
-      const citySelect = document.getElementById("citySelect");
-      const jsonDisplay = document.getElementById("jsonDisplay");
-      const updateJsonDisplay = () => {
-        const hiddenKeys = ["Link", "是否有舞台（字符串匹配）"];
-        const keyHandlers = {
-          名称: (tableCell, exhibition) => {
-            const link = document.createElement("a");
-            link.href = exhibition["Link"];
-            link.innerHTML = exhibition["名称"];
-            tableCell.appendChild(link);
-          },
-          地点: (tableCell, exhibition) => {
-            // if 是否有舞台（字符串匹配）is true, add a 🎤 emoji
-            if (exhibition["是否有舞台（字符串匹配）"] === true) {
-              tableCell.innerHTML = `${exhibition["地点"]} 🎤`;
-            } else {
-              tableCell.innerHTML = exhibition["地点"];
-            }
-          },
-          具体时间范围: (tableCell, exhibition) => {
-            const timeRange = exhibition["具体时间范围"];
-            // replace all "yyyy.mm.dd" to "mm.dd"
-            const timeRangeShort = timeRange.replace(
-              /\d{4}\.\d{2}\.\d{2}/g,
-              (match) => {
-                return match.slice(5);
-              }
-            );
-            tableCell.innerHTML = timeRangeShort;
-          },
-        };
+      const { createApp, ref, watch, onMounted, computed } = Vue;
 
-        const selectedCity = citySelect.value;
-        const jsonFilePath = `${selectedCity}-漫展信息.json`;
+      createApp({
+        setup() {
+          const citySelect = ref(
+            localStorage.getItem("selectedCity") || "上海"
+          );
+          const jsonDisplay = ref({});
 
-        fetch(jsonFilePath)
-          .then((response) => response.json())
-          .then((data) => {
-            jsonDisplay.innerHTML = "";
-            // <details> and <summary> for each kind of exhibition
-            for (const exhibitionKind in data) {
-              const exhibitionKindDetails = document.createElement("details");
-              const exhibitionKindSummary = document.createElement("summary");
-              exhibitionKindSummary.innerHTML = exhibitionKind;
-              exhibitionKindDetails.appendChild(exhibitionKindSummary);
-              exhibitions = data[exhibitionKind]; // a array of exhibition info in k-v object
-              // extract the keys of the first exhibition as the table header
-              const tableHeader = document.createElement("tr");
-              for (const key in exhibitions[0]) {
-                if (hiddenKeys.includes(key)) {
-                  continue;
-                }
-                const tableHeaderCell = document.createElement("th");
-                tableHeaderCell.innerHTML = key;
-                tableHeader.appendChild(tableHeaderCell);
-              }
-              // <table> for each kind of exhibition
-              const table = document.createElement("table");
-              table.appendChild(tableHeader);
-              // <tr> and <td> for each exhibition
-              for (const exhibition of exhibitions) {
-                const tableRow = document.createElement("tr");
-                for (const key in exhibition) {
-                  if (hiddenKeys.includes(key)) {
-                    continue;
-                  }
-                  const tableCell = document.createElement("td");
-                  if (key in keyHandlers) {
-                    keyHandlers[key](tableCell, exhibition);
-                  } else {
-                    tableCell.innerHTML = exhibition[key];
-                  }
-                  tableRow.appendChild(tableCell);
-                }
-                table.appendChild(tableRow);
-              }
-              exhibitionKindDetails.appendChild(table);
-              jsonDisplay.appendChild(exhibitionKindDetails);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            jsonDisplay.innerHTML = `Error loading JSON: ${error}`;
+          watch(citySelect, (newValue) => {
+            localStorage.setItem("selectedCity", newValue);
+            updateJson();
           });
-      };
-      citySelect.addEventListener("change", () => {
-        // remember the selected city in localStorage
-        localStorage.setItem("selectedCity", citySelect.value);
-        updateJsonDisplay();
-      });
-      // load the selected city from localStorage
-      citySelect.value = localStorage.getItem("selectedCity") || "上海";
-      updateJsonDisplay();
+
+          const updateJson = () => {
+            jsonDisplay.value = {};
+            const selectedCity = citySelect.value;
+            const jsonFilePath = `${selectedCity}-漫展信息.json`;
+            fetch(jsonFilePath)
+              .then((response) => response.json())
+              .then((data) => {
+                jsonDisplay.value = data;
+              })
+              .catch((error) => {
+                jsonDisplay.value = `Error loading data.json: ${error}`;
+              });
+          };
+
+          const nonEmptyKindsExhibitions = computed(() => {
+            const nonEmptyKindsExhibitions = {};
+            for (const exhibitionKind in jsonDisplay.value) {
+              const exhibitions = jsonDisplay.value[exhibitionKind];
+              if (exhibitions.length > 0) {
+                nonEmptyKindsExhibitions[exhibitionKind] = exhibitions;
+              }
+            }
+            return nonEmptyKindsExhibitions;
+          });
+
+          onMounted(updateJson);
+
+          const getCoverUrl = (url) => {
+            return "https://api.liuly.moe/image/" + url;
+          };
+
+          const redirect = (item) => {
+            window.open(item.Link);
+          };
+
+          return {
+            citySelect,
+            jsonDisplay,
+            nonEmptyKindsExhibitions,
+            getCoverUrl,
+            redirect,
+          };
+        },
+      }).mount("#app");
     </script>
 
     <script

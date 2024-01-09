@@ -77,7 +77,7 @@ def collectEachAreaInfo(area, headers, totalResultList):
             # print('第{}页，匹配了{}个活动'.format(page, j))
         resultList.sort()
         columnHeader = ['开始时间', '名称', '地点', '具体时间范围', '想去人数', '最低票价', '是否有舞台（字符串匹配）',
-                        'Link']
+                        'Link', 'Cover']
         resultList.insert(0, columnHeader)
         totalResultList.append(pd.DataFrame(resultList))
         print(" - " + type + ": 共 " + str(len(resultList) - 1) + " 条数据")
@@ -117,9 +117,10 @@ def collectEachPage(headers, pageContent, resultList):
         venue_info = JsonSearch(jsondata.search_first_value('venue_info'), mode='j').search_first_value('name')
         addressDetail = jsondata.search_first_value('address_detail')  + ' ' + venue_info
         sale_flag = JsonSearch(jsondata.search_first_value('sale_flag'), mode='j').search_first_value('display_name')
+        cover_url = jsondata.search_first_value('cover')
 
         list = [startTime, project_name, addressDetail, timeRange, wantToCount,
-                (price_low if price_low != "" else sale_flag), hasDancing, activityUrl]
+                (price_low if price_low != "" else sale_flag), hasDancing, activityUrl, cover_url]
         resultList.append(list)
 
 if __name__ == '__main__':
