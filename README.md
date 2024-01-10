@@ -6,11 +6,6 @@ Using GitHub Actions to automatically collect information about animation exhibi
 
 The result page: <https://liuly.moe/BilibiliAnimationExhibitionInformationCollection/>
 
-## Help wanted
-
-- [x] page design (reference page wanted)
-- [ ] PWA (?)
-
 ## Run
 
 1. python env = 3.10
