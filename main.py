@@ -88,21 +88,18 @@ def collectEachPage(headers, pageContent, resultList):
     for activity in pageContent[1:]:
         activityName = re.compile('"project_name":"(.*?)"')
         j += 1
-        cityRe = re.compile('"city":"(.*?)"')
         lowPrice = re.compile('"price_low":([0-9]+)')
         highPrice = re.compile('"price_high":([0-9]+)')
         startTime = re.compile('"start_time":"(.*?)"')
-        url = re.compile('"url":"(.*?)"')
         venueAddress = re.compile('"content":"(.*?)"')
 
         project_name = ''.join(activityName.findall(activity))  # 不合并是列表，合并是字符串
-        # city = ''.join((cityRe.findall(activity)))
 
         price_low = ''.join(lowPrice.findall(activity))[0:-2]
         price_high = ''.join((highPrice.findall(activity)))[0:-2]
-        startTime = ''.join((startTime.findall(activity)))
-        activityUrl = ''.join((url.findall(activity)))  # 活动详情页面
+        startTime = ''.join((startTime.findall(activity)))    
         id = activity.split(",")[0]  # id for find the details time range
+        activityUrl = "https://show.bilibili.com/platform/detail.html?id=" + id
         url = (("https://show.bilibili.com/api/ticket/project/getV2?version=134&id={}&project_id={}&requestSource=pc-new").format(
             id, id))
         details = requests.get(url=url, headers=headers).content.decode('utf-8')

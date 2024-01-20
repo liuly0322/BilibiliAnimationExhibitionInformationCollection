@@ -328,7 +328,7 @@
                 jsonDisplay.value = data;
               })
               .catch((error) => {
-                jsonDisplay.value = `Error loading data.json: ${error}`;
+                alert(`加载 ${jsonFilePath} 失败，错误信息：${error}`);
               });
           };
 
