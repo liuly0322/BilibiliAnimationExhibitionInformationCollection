@@ -1,10 +1,7 @@
 import requests
-import time
-import re
 import os
 import threading
 import urllib
-from urllib import parse
 import pandas as pd  # 用于数据输出
 from jsonsearch import JsonSearch
 
@@ -17,31 +14,20 @@ areas = [
     {"name": "广州", "code": 440100},
     {"name": "合肥", "code": 340100},
     {"name": "南宁", "code": 450100}
-] # 想搜其他城市的话，去浏览器页面找到对应的code，填过来
+] # 想搜其他城市的话，去浏览器页面找到对应的 code，填过来
 
 typeLists = ['展览', '演出', '本地生活', '全部类型']
-pageNum = 4 # 默认搜集4页，可以自己灵活调整
+pageNum = 4 # 默认搜集 4 页，可以自己灵活调整
 
 resultFolder = '漫展信息/'
 
 
 def DF2Excel(data_path, data_list, sheet_name_list):
-    '''将多个dataframe 保存到同一个excel 的不同sheet 上
-    参数：
-    data_path：str
-        需要保存的文件地址及文件名
-    data_list：list
-        需要保存到excel的dataframe
-    sheet_name_list：list
-        sheet name 每个sheet 的名称
-    '''
     if (os.path.exists(data_path)):
         os.remove(data_path)
     write = pd.ExcelWriter(data_path)
     for da, sh_name in zip(data_list, sheet_name_list):
         da.to_excel(write, sheet_name=sh_name, header=None)
-
-    # 必须运行write.save()，不然不能输出到本地
     write._save()
 
 
@@ -61,20 +47,16 @@ def getAllInfo():
 
 def collectEachAreaInfo(area, headers, totalResultList):
     print("开始搜集：" + area.get("name"))
-    i = 0
     for type in typeLists:
         resultList = []
-        i += 1
         for page in range(1, pageNum):
-            #
             url = ("https://show.bilibili.com/api/ticket/project/listV2?version=134&page={}&pagesize=16&area={}&filter=&platform=web&p_type={}").format(
                 page, area.get("code"), urllib.parse.quote(type))
-            pageContent = requests.get(url=url, headers=headers).content.decode('utf-8').split('"project_id":')
-            # print('这是第{}页'.format(page))
-            if (len(pageContent) <= 1):
+            pageContent = requests.get(url=url, headers=headers).content.decode('utf-8')
+            activities = JsonSearch(object=pageContent, mode='s').search_first_value(key='result')
+            if len(activities) == 0:
                 break
-            collectEachPage(headers, pageContent, resultList)
-            # print('第{}页，匹配了{}个活动'.format(page, j))
+            collectEachPage(headers, activities, resultList)
         resultList.sort()
         columnHeader = ['开始时间', '名称', '地点', '具体时间范围', '想去人数', '最低票价', '是否有舞台（字符串匹配）',
                         'Link', 'Cover']
@@ -83,33 +65,22 @@ def collectEachAreaInfo(area, headers, totalResultList):
         print(" - " + type + ": 共 " + str(len(resultList) - 1) + " 条数据")
 
 
-def collectEachPage(headers, pageContent, resultList):
-    j = 0
-    for activity in pageContent[1:]:
-        activityName = re.compile('"project_name":"(.*?)"')
-        j += 1
-        lowPrice = re.compile('"price_low":([0-9]+)')
-        highPrice = re.compile('"price_high":([0-9]+)')
-        startTime = re.compile('"start_time":"(.*?)"')
-        venueAddress = re.compile('"content":"(.*?)"')
-
-        project_name = ''.join(activityName.findall(activity))  # 不合并是列表，合并是字符串
-
-        price_low = ''.join(lowPrice.findall(activity))[0:-2]
-        price_high = ''.join((highPrice.findall(activity)))[0:-2]
-        startTime = ''.join((startTime.findall(activity)))    
-        id = activity.split(",")[0]  # id for find the details time range
+def collectEachPage(headers, activities, resultList):
+    for activity in activities:
+        project_name = activity['project_name']
+        price_low = activity['price_low']
+        price_high = activity['price_high']
+        startTime = activity['start_time']
+        id = str(activity['id'])
         activityUrl = "https://show.bilibili.com/platform/detail.html?id=" + id
+
         url = (("https://show.bilibili.com/api/ticket/project/getV2?version=134&id={}&project_id={}&requestSource=pc-new").format(
             id, id))
         details = requests.get(url=url, headers=headers).content.decode('utf-8')
         hasDancing = details.__contains__("舞")
-        # venueAddress = ''.join(venueAddress.findall(details.split('场馆地址",')[1].split("}")[0]))
-
         jsondata = JsonSearch(object=details, mode='s')
         wantToCount = JsonSearch(object=jsondata.search_first_value(key='wish_info'),
                                  mode='j').search_first_value(key='count')
-
         timeRange = jsondata.search_first_value('project_label')
         venue_info = JsonSearch(jsondata.search_first_value('venue_info'), mode='j').search_first_value('name')
         addressDetail = jsondata.search_first_value('address_detail')  + ' ' + venue_info
@@ -121,6 +92,4 @@ def collectEachPage(headers, pageContent, resultList):
         resultList.append(list)
 
 if __name__ == '__main__':
-    thread1 = threading.Thread(name='t1', target=getAllInfo())
-    thread1.start()
-    # 这里看起来是用了进程，实际上完全没有显示，不用管这个，就算没有打包成类也可以直接爬取。
+    getAllInfo()
