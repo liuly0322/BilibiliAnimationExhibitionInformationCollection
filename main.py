@@ -68,8 +68,8 @@ def collectEachAreaInfo(area, headers, totalResultList):
 def collectEachPage(headers, activities, resultList):
     for activity in activities:
         project_name = activity['project_name']
-        price_low = activity['price_low']
-        price_high = activity['price_high']
+        price_low = str(activity['price_low'])[0:-2]
+        price_high = str(activity['price_high'])[0:-2]
         startTime = activity['start_time']
         id = str(activity['id'])
         activityUrl = "https://show.bilibili.com/platform/detail.html?id=" + id
