@@ -18,6 +18,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python main.py
       - run: python excel_to_json.py
+      - run: rm 漫展信息/*.xlsx
       - uses: s0/git-publish-subdir-action@develop
         env:
           REPO: self
