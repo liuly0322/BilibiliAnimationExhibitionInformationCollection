@@ -211,8 +211,6 @@ details[open] summary {
   .project-list-item-detail {
     align-items: stretch;
     color: #212121;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
