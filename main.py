@@ -60,13 +60,13 @@ def collectEachType(area, type):
         if len(pageResult) == 0:
             break
         resultList.extend(pageResult)
+    resultList = [list(t) for t in set([tuple(t) for t in resultList])]
     resultList.sort()
     columnHeader = [
         "开始时间",
         "名称",
         "地点",
         "具体时间范围",
-        "想去人数",
         "最低票价",
         "Link",
         "Cover",
@@ -90,18 +90,12 @@ def getActivityInfo(activity):
         sale_flag_number = activity["sale_flag_number"]
         saleFlag = activity["sale_flag"]
         priceLow = activity["price_low"]/100
-        startTime = activity["start_time"]
-        id = str(activity["id"])
-        activityUrl = f"https://show.bilibili.com/platform/detail.html?id={id}"
-
-        url = f"https://show.bilibili.com/api/ticket/project/getV2?version=134&id={id}&project_id={id}&requestSource=pc-new"
-        details = requests.get(url=url, headers=headers).content.decode("utf-8")
-        details = JsonSearch(object=details, mode="s")
-        wantToCount = details.search_first_value("wish_info")["count"]
-        timeRange = details.search_first_value("project_label")
-        venue_info = details.search_first_value("venue_info")["name"]
-        addressDetail = details.search_first_value("address_detail") + " " + venue_info
-        coverUrl = details.search_first_value("cover")
+        startTime = activity["start_time"] + ' - ' + activity["end_time"]
+        startUnix = activity["start_unix"] # 1712307600
+        timeRange = pd.to_datetime(startUnix, unit='s', utc=True).tz_convert('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
+        addressDetail = activity["venue_name"]
+        coverUrl = activity["cover"]
+        activityUrl = f"https://show.bilibili.com/platform/detail.html?id={activity['id']}"
     except Exception:
         print(traceback.format_exc())
 
@@ -110,7 +104,6 @@ def getActivityInfo(activity):
         projectName,
         addressDetail,
         timeRange,
-        wantToCount,
         (priceLow if sale_flag_number < 3 else saleFlag),
         activityUrl,
         coverUrl,
