@@ -199,12 +199,9 @@ details[open] summary {
   }
 
   .project-list-item-img {
-    -webkit-box-flex: 0;
     background-size: cover;
     border-radius: 0.53333vw;
-    -webkit-box-shadow: 0 1.33333vw 2.66667vw rgba(0, 0, 0, 0.1);
     box-shadow: 0 1.33333vw 2.66667vw rgba(0, 0, 0, 0.1);
-    -ms-flex: 0 0 24vw;
     flex: 0 0 24vw;
     height: 32vw;
     position: relative;
@@ -212,19 +209,12 @@ details[open] summary {
   }
 
   .project-list-item-detail {
-    -webkit-box-flex: 1;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-box-align: stretch;
-    -ms-flex-align: stretch;
     align-items: stretch;
     color: #212121;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex: 1 1 auto;
     flex: 1 1 auto;
-    -ms-flex-direction: column;
     flex-direction: column;
     overflow: hidden;
     padding-left: 3.2vw;
