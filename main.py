@@ -90,7 +90,9 @@ def getActivityInfo(activity):
         sale_flag_number = activity["sale_flag_number"]
         saleFlag = activity["sale_flag"]
         priceLow = activity["price_low"]/100
-        startTime = activity["start_time"] + ' - ' + activity["end_time"]
+        startTime = activity["start_time"]
+        if startTime != activity["end_time"]:
+            startTime += ' - ' + activity["end_time"]
         startUnix = activity["start_unix"] # 1712307600
         timeRange = pd.to_datetime(startUnix, unit='s', utc=True).tz_convert('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
         addressDetail = activity["venue_name"]
