@@ -3,6 +3,9 @@ name: Update xlsx
 # mannually trigger workflow or run on schedule
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
   schedule:
     - cron: "0 20 * * *"
 
