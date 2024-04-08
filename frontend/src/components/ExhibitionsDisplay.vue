@@ -83,8 +83,7 @@ const redirect = (item: Exhibition) => {
     <div id="json-display">
       <div id="project-list">
         <div v-for="item in exhibitions" :key="item.Link" class="project-list-item" @click="redirect(item)">
-          <div class="project-list-item-img" :style="{ backgroundImage: 'url(' + getCoverUrl(item.Cover) + ')' }">
-          </div>
+          <img class="project-list-item-img" v-lazy="getCoverUrl(item.Cover)" />
           <div class="project-list-item-detail">
             <div class="project-list-item-title">{{ item.名称 }}</div>
             <div class="project-list-item-time">📅 {{ item.开始时间 }}</div>

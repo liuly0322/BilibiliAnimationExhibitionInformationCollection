@@ -16,6 +16,32 @@ export default defineConfig({
         description: '爬取 Bilibili 漫展信息，按时间排序',
         lang: 'zh-CN',
         theme_color: '#ffffff',
+        icons: [
+          {
+            src: "/pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any"
+          },
+          {
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any"
+          },
+          {
+            src: "/pwa-maskable-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable"
+          },
+          {
+            src: "/pwa-maskable-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable"
+          }
+        ],
       }
     })
   ],

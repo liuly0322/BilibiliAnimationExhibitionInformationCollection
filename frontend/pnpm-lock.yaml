@@ -52,6 +52,9 @@ devDependencies:
   vue-tsc:
     specifier: ^2.0.6
     version: 2.0.7(typescript@5.4.3)
+  vue3-lazyload:
+    specifier: ^0.3.8
+    version: 0.3.8(vue@3.4.21)
 
 packages:
 
@@ -4324,6 +4327,21 @@ packages:
       vue: 3.4.21(typescript@5.4.3)
     dev: true
 
+  /vue-demi@0.12.5(vue@3.4.21):
+    resolution: {integrity: sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.4.21(typescript@5.4.3)
+    dev: true
+
   /vue-eslint-parser@9.4.2(eslint@8.57.0):
     resolution: {integrity: sha512-Ry9oiGmCAK91HrKMtCrKFWmSFWvYkpGglCeFAIqDdr9zdXmMMpJOmUJS7WWsW7fX81h6mwHmUZCQQ1E0PkSwYQ==}
     engines: {node: ^14.17.0 || >=16.0.0}
@@ -4359,6 +4377,19 @@ packages:
       '@vue/language-core': 2.0.7(typescript@5.4.3)
       semver: 7.6.0
       typescript: 5.4.3
+    dev: true
+
+  /vue3-lazyload@0.3.8(vue@3.4.21):
+    resolution: {integrity: sha512-UiJHRT7mzry102WbhtrRgJh+f8Z8u4Z+H1RU4dvPmQeq7wFSDFxZB9iJOWGihH2FscXN/8rMGLDOQJAmjwqpCg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.4.21(typescript@5.4.3)
+      vue-demi: 0.12.5(vue@3.4.21)
     dev: true
 
   /vue@3.4.21(typescript@5.4.3):
