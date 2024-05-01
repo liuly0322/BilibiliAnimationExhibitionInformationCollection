@@ -2,16 +2,10 @@
 
 A fork of [BilibiliAnimationExhibitionInformationCollection](https://github.com/zxcsjf/BilibiliAnimationExhibitionInformationCollection).
 
-Using GitHub Actions to automatically collect information about animation exhibitions on Bilibili.
+Using GitHub Actions to automatically collect information about animation exhibitions on Bilibili, and sort them in time order.
 
-The result page: <https://liuly.moe/BilibiliAnimationExhibitionInformationCollection/>
+The result page is currently available at: <https://liuly.moe/BilibiliAnimationExhibitionInformationCollection/>.
 
 ## Run
 
-1. python env = 3.10
-
-2. prerequisite
-
-- pip install -r requirements.txt
-
-3. python main.py
+Refer to [auto-update.yml](.github/workflows/auto_update.yml).
