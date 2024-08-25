@@ -28,5 +28,5 @@ jobs:
           BRANCH: gh-pages
           FOLDER: 漫展信息
           COMMIT_NAME: bili-exhibition-bot
-          COMMIT_EMAIL: ''
+          COMMIT_EMAIL: anonymous@example.com
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
