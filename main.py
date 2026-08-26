@@ -80,33 +80,67 @@ def collectEachPage(area, type, page):
         "https://show.bilibili.com/api/ticket/project/listV2?version=134&page={}&pagesize=16&area={}&filter=&platform=web&p_type={}"
     ).format(page, area.get("code"), urllib.parse.quote(type))
     source = requests.get(url=url, headers=headers).content.decode("utf-8")
-    activities = JsonSearch(object=source, mode="s").search_first_value(key="result")
-    return [getActivityInfo(activity) for activity in activities]
+    activities = JsonSearch(object=source, mode="s").search_first_value(key="result") or []
+    if not isinstance(activities, list):
+        return []
+    results = []
+    for activity in activities:
+        activityInfo = getActivityInfo(activity)
+        if activityInfo is not None:
+            results.append(activityInfo)
+    return results
 
 
 def getActivityInfo(activity):
-    try:
-        projectName = activity["project_name"]
-        sale_flag_number = activity["sale_flag_number"]
-        saleFlag = activity["sale_flag"]
-        priceLow = activity["price_low"]/100
-        startTime = activity["start_time"]
-        if startTime != activity["end_time"]:
-            startTime += ' - ' + activity["end_time"]
-        startUnix = activity["start_unix"] # 1712307600
-        timeRange = pd.to_datetime(startUnix, unit='s', utc=True).tz_convert('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
-        addressDetail = activity["venue_name"]
-        coverUrl = activity["cover"]
-        activityUrl = f"https://show.bilibili.com/platform/detail.html?id={activity['id']}"
-    except Exception:
-        print(traceback.format_exc())
+    if not isinstance(activity, dict):
+        return None
+
+    projectName = str(activity.get("project_name") or "")
+    saleFlag = activity.get("sale_flag")
+    sale_flag_number = activity.get("sale_flag_number")
+
+    priceLow = activity.get("price_low")
+    if isinstance(priceLow, (int, float)):
+        lowPriceDisplay = str(priceLow / 100)
+    else:
+        lowPriceDisplay = ""
+
+    if isinstance(sale_flag_number, int) and sale_flag_number >= 3:
+        priceDisplay = str(saleFlag or "")
+    else:
+        priceDisplay = lowPriceDisplay or str(saleFlag or "")
+
+    startTime = str(activity.get("start_time") or "")
+    endTime = str(activity.get("end_time") or "")
+    if startTime and endTime and startTime != endTime:
+        startTime = startTime + " - " + endTime
+    elif not startTime:
+        startTime = endTime
+
+    timeRange = ""
+    startUnix = activity.get("start_unix")
+    if isinstance(startUnix, (int, float)):
+        timeRange = (
+            pd.to_datetime(startUnix, unit="s", utc=True)
+            .tz_convert("Asia/Shanghai")
+            .strftime("%Y-%m-%d %H:%M:%S")
+        )
+
+    addressDetail = str(activity.get("venue_name") or "")
+    coverUrl = str(activity.get("cover") or "")
+    activityId = activity.get("id")
+    activityUrl = (
+        f"https://show.bilibili.com/platform/detail.html?id={activityId}"
+        if activityId is not None
+        else ""
+    )
 
     return [
         startTime,
         projectName,
         addressDetail,
         timeRange,
-        (str(priceLow) if sale_flag_number < 3 else str(saleFlag)),
+        priceDisplay,
         activityUrl,
         coverUrl,
     ]
