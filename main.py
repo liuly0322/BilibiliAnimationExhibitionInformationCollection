@@ -85,7 +85,10 @@ def collectEachPage(area, type, page):
         return []
     results = []
     for activity in activities:
-        activityInfo = getActivityInfo(activity)
+        try:
+            activityInfo = getActivityInfo(activity)
+        except Exception:
+            continue
         if activityInfo is not None:
             results.append(activityInfo)
     return results
@@ -120,11 +123,14 @@ def getActivityInfo(activity):
     timeRange = ""
     startUnix = activity.get("start_unix")
     if isinstance(startUnix, (int, float)):
-        timeRange = (
-            pd.to_datetime(startUnix, unit="s", utc=True)
-            .tz_convert("Asia/Shanghai")
-            .strftime("%Y-%m-%d %H:%M:%S")
-        )
+        try:
+            timeRange = (
+                pd.to_datetime(startUnix, unit="s", utc=True)
+                .tz_convert("Asia/Shanghai")
+                .strftime("%Y-%m-%d %H:%M:%S")
+            )
+        except Exception:
+            timeRange = ""
 
     addressDetail = str(activity.get("venue_name") or "")
     coverUrl = str(activity.get("cover") or "")
