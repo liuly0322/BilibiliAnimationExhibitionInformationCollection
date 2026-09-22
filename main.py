@@ -50,27 +50,7 @@ def getAllInfo():
 
 def collectEachArea(area):
     print("正在搜集 " + area.get("name") + " 的漫展信息...")
-    areaResults = []
-    for typeName in typeLists:
-        try:
-            areaResults.append(collectEachType(area, typeName))
-        except Exception:
-            print(" - " + typeName + ": 搜集失败，已跳过")
-            print(traceback.format_exc())
-            areaResults.append(
-                pd.DataFrame(
-                    [[
-                        "开始时间",
-                        "名称",
-                        "地点",
-                        "具体时间范围",
-                        "最低票价",
-                        "Link",
-                        "Cover",
-                    ]]
-                )
-            )
-    return areaResults
+    return [collectEachType(area, typeName) for typeName in typeLists]
 
 
 def collectEachType(area, type):
@@ -99,8 +79,13 @@ def collectEachPage(area, type, page):
     url = (
         "https://show.bilibili.com/api/ticket/project/listV2?version=134&page={}&pagesize=16&area={}&filter=&platform=web&p_type={}"
     ).format(page, area.get("code"), urllib.parse.quote(type))
-    source = requests.get(url=url, headers=headers).content.decode("utf-8")
-    activities = JsonSearch(object=source, mode="s").search_first_value(key="result") or []
+    try:
+        response = requests.get(url=url, headers=headers, timeout=20)
+        source = response.content.decode("utf-8")
+        activities = JsonSearch(object=source, mode="s").search_first_value(key="result") or []
+    except (requests.RequestException, UnicodeDecodeError):
+        print(" - " + type + f" 第 {page} 页请求失败，已跳过")
+        return []
     if not isinstance(activities, list):
         return []
     results = []
