@@ -50,7 +50,27 @@ def getAllInfo():
 
 def collectEachArea(area):
     print("正在搜集 " + area.get("name") + " 的漫展信息...")
-    return [collectEachType(area, type) for type in typeLists]
+    areaResults = []
+    for typeName in typeLists:
+        try:
+            areaResults.append(collectEachType(area, typeName))
+        except Exception:
+            print(" - " + typeName + ": 搜集失败，已跳过")
+            print(traceback.format_exc())
+            areaResults.append(
+                pd.DataFrame(
+                    [[
+                        "开始时间",
+                        "名称",
+                        "地点",
+                        "具体时间范围",
+                        "最低票价",
+                        "Link",
+                        "Cover",
+                    ]]
+                )
+            )
+    return areaResults
 
 
 def collectEachType(area, type):
