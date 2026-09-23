@@ -83,7 +83,7 @@ def collectEachPage(area, type, page):
         response = requests.get(url=url, headers=headers, timeout=20)
         source = response.content.decode("utf-8")
         activities = JsonSearch(object=source, mode="s").search_first_value(key="result") or []
-    except (requests.RequestException, UnicodeDecodeError):
+    except (requests.RequestException, UnicodeDecodeError, ValueError):
         print(" - " + type + f" 第 {page} 页请求失败，已跳过")
         return []
     if not isinstance(activities, list):
